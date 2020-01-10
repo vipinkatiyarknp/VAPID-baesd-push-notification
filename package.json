@@ -8,9 +8,16 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.0",
+    "lodash": "^4.17.5",
+    "twilio": "^3.17.1",
+    "web-push": "^3.2.2"
+  },
   "devDependencies": {
     "express": "^4.16.2",
-    "web-push": "^3.2.5"
+    "web-push": "^3.2.5",
+    "snyk": "^1.118.1"
   }
 }
