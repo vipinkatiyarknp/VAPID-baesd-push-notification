@@ -3,6 +3,7 @@ const express = require('express');
 const webPush = require('web-push');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
+var proxy = require('express-http-proxy');
 
 // Server settings with ExpressJS
 const app = express();
@@ -29,12 +30,14 @@ let subscriptions = [];
 
 // Set up CORS and allow any host for now to test things out
 // WARNING! Don't use `*` in production unless you intend to allow all hosts
+
 app.use(bodyParser.json());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   return next();
 });
+//app.use('/push', proxy('noi3.proxy.corp.sopra:8080'));
 
 // Allow clients to subscribe to this application server for notifications
 app.post('/subscribe', (req, res) => {
@@ -54,19 +57,20 @@ app.post('/subscribe', (req, res) => {
 app.post('/push', (req, res, next) => {
   const pushSubscription = req.body.pushSubscription;
   const notificationMessage = req.body.notificationMessage;
-  console.log("pushSubscription>>>>>>>>>",pushSubscription);
-  console.log("notificationMessage>>>>>>>>>",notificationMessage);
+  console.log("pushSubscription>>>>>>>>>", pushSubscription);
+  console.log("notificationMessage>>>>>>>>>", notificationMessage);
   if (!pushSubscription) {
     res.status(400).send(constants.errors.ERROR_SUBSCRIPTION_REQUIRED);
     return next(false);
   }
 
   if (subscriptions.length) {
-    console.log("subscriptions.length>>>>>>>>>",subscriptions.length);
+    console.log("subscriptions length>>>>>>>>>", subscriptions.length);
     subscriptions.map((subscription, index) => {
       let jsonSub = JSON.parse(subscription);
-      console.log("JSON.parse(subscription)>>>>>>>>>",JSON.parse(subscription));
+      console.log("Subscription is ready to send >>>>>>>>>", JSON.parse(subscription));
       // Use the web-push library to send the notification message to subscribers
+      app.use('/push', proxy('noi3.proxy.corp.sopra:8080'));
       webPush.sendNotification(jsonSub, notificationMessage)
         .then(success => handleSuccess(success, index))
         .catch(error => handleError(error, index));
@@ -77,13 +81,13 @@ app.post('/push', (req, res, next) => {
   }
 
   function handleSuccess(success, index) {
-    console.log('OHH YES SUCESS ');
+    console.log('OHH YES SUCESS', success, index);
     res.send(constants.messages.SINGLE_PUBLISH_SUCCESS_MESSAGE);
     return next(false);
   }
 
   function handleError(error, index) {
-    console.log('OHH No FAILED ');
+    console.log('OHH No FAILED', error, index);
     res.status(500).send(constants.errors.ERROR_MULTIPLE_PUBLISH);
     return next(false);
   }

@@ -14,7 +14,14 @@ const app = (() => {
   }
 
   Notification.requestPermission(status => {
-    console.log('Notification permission status:', status);
+    console.log('status',status)
+    if(status === 'denied'){
+      console.log('Notification permission status:', 'REJECTED');
+     
+    } else{
+      console.log('Notification permission status:', 'ACCEPTED');
+    }
+    
   });
 
   function displayNotification() {
@@ -119,18 +126,6 @@ const app = (() => {
 
   function updateSubscriptionOnServer(subscription) {
     // Here's where you would send the subscription to the application server
-
-    // const subscriptionJson = document.querySelector('.js-subscription-json');
-    // const endpointURL = document.querySelector('.js-endpoint-url');
-    // const subAndEndpoint = document.querySelector('.js-sub-endpoint');
-
-    // if (subscription) {
-    //   subscriptionJson.textContent = JSON.stringify(subscription);
-    //   endpointURL.textContent = subscription.endpoint;
-    //   subAndEndpoint.style.display = 'block';
-    // } else {
-    //   subAndEndpoint.style.display = 'none';
-    // }
     var subscriptionJson = document.querySelector('.js-subscription-json');
      var endpointURL = document.querySelector('.js-endpoint-url');
      var subAndEndpoint = document.querySelector('.js-sub-endpoint');
@@ -156,6 +151,7 @@ const app = (() => {
 
   function updateBtn() {
     if (Notification.permission === 'denied') {
+      alert('Push Messaging Blocked')
       pushButton.textContent = 'Push Messaging Blocked';
       pushButton.disabled = true;
       updateSubscriptionOnServer(null);
