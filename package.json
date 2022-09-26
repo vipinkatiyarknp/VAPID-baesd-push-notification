@@ -19,6 +19,6 @@
   "devDependencies": {
     "express": "^4.16.2",
     "web-push": "^3.2.5",
-    "snyk": "^1.118.1"
+    "snyk": "^1.1012.0"
   }
 }
